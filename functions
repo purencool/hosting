@@ -1,0 +1,94 @@
+#!/bin/bash
+
+
+##
+# Help commmands
+##
+function help(){
+    echo ''
+    echo '--------------------------------------------------------------------------------------------------'
+    echo ' Commands you can use.                                                                            '
+    echo '--------------------------------------------------------------------------------------------------'
+    echo ' app:logs:dns                                                                                     '
+    echo ' app:start                                                                                        '
+    echo ' app:stop                                                                                         '
+    echo ' app:update                                                                                       '
+    echo ' build:containers      ./appcli cli:build:containers                                              '
+    echo ' config                ./appcli cli:site:config {default.domain}                                  '
+    echo ' config:find           ./appcli cli:site:config {default.domain} | jq ".[] | {string}"            '
+    echo ' create                ./appcli cli:site:creation {default.domain}                                '
+    echo ' domains:add           ./appcli cli:site:domains:add {default.domain}                             '
+    echo ' domains:list          ./appcli cli:site:domains:list {default.domain}                            '
+    echo ' domains:list:users    ./appcli cli:site:domains:list:user {default.domain}                       '
+    echo ' domains:list:search   ./appcli cli:site:domains:list:search {search_string}                      '
+    echo ' item:add              ./appcli cli:site:item:add {default.domain} {environment} {json_string}    '
+    echo ' item:update           ./appcli cli:site:item:update {default.domain} {environment} {json_string} '
+    echo ' item:remove           ./appcli cli:site:item:remove {default.domain} {environment} {json_string} '
+    echo '--------------------------------------------------------------------------------------------------'
+    echo ''
+}
+
+##
+# Update host packages.
+##
+function updateDebian() {
+ sudo apt-get update & sudo apt upgrade
+}
+
+function updateRel() {
+  sudo yum update -y & sudo yum upgrade -y    
+}
+
+function updateApp() {
+  composer self-update
+  git pull origin main
+}
+
+##
+# Manage dns
+##
+function enableDns(){
+  sudo systemctl stop systemd-resolved
+  sudo systemctl disable --now systemd-resolved
+  sudo systemctl mask systemd-resolved
+  sudo rm /etc/resolv.conf
+  echo "nameserver 127.0.0.1" | sudo tee /etc/resolv.conf
+  sudo systemctl restart NetworkManager
+}
+
+function disableDns(){
+  sudo systemctl unmask systemd-resolved || true
+  sudo systemctl daemon-reload
+  if ! sudo systemctl enable --now systemd-resolved; then
+    sudo journalctl -u systemd-resolved -n 200 --no-pager || true
+    exit 1
+  fi
+
+  STUB="/run/systemd/resolve/stub-resolv.conf"
+  if [ ! -e "$STUB" ]; then
+    sudo systemctl status systemd-resolved --no-pager || true
+    exit 1
+  fi
+  
+  sudo rm -f /etc/resolv.conf
+  sudo ln -sf "$STUB" /etc/resolv.conf
+  sudo netplan apply || true
+  sudo systemctl status systemd-resolved --no-pager || true
+  # resolvectl status || true
+}
+
+##
+# Docker commands.
+##
+function deleteLogs(){
+  for CID in $(docker ps -q); do
+    LOG="/var/lib/docker/containers/$CID/$CID-json.log"
+    if [ -f "$LOG" ]; then
+      sudo truncate -s 0 "$LOG"
+    fi
+  done
+}
+
+function dnsLogs(){
+  docker logs coredns 2>&1 | tail -n 200
+}

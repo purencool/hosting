@@ -1,0 +1,60 @@
+#!/bin/bash
+
+if [[ -f ./functions ]]; then
+  source ./functions
+fi
+
+path=$(pwd)
+config_path=$path'/../hosting/config/containers'
+
+if [[ "$1" == "build:containers" ]]; then
+   ./appcli cli:build:containers
+
+elif [[ "$1" == "app:start" ]]; then
+  enableDns
+  bash "$(pwd)/../hosting/config/containers/start.sh" "$config_path"
+
+elif [[ "$1" == "app:stop" ]]; then
+  bash "$(pwd)/../hosting/config/containers/stop.sh" "$config_path"
+  disableDns
+  
+elif [[ "$1" == "app:update" ]]; then
+  updateDebian;
+  updateApp;
+
+elif [[ "$1" == "app:logs:dns" ]]; then
+  dnsLogs;
+
+elif [[ "$1" == "config" ]]; then
+  ./appcli cli:site:config $2
+
+elif [[ "$1" == "config:find" ]]; then
+  ./appcli cli:site:config $2 | jq ".[] | $3"
+
+elif [ "$1" == "create" ]; then
+  ./appcli cli:site:creation $2
+
+elif [[ "$1" == "domains:add" ]]; then
+   ./appcli cli:site:domains:add $2
+   
+elif [[ "$1" == "domains:list" ]]; then
+  ./appcli cli:site:domains:list $2
+
+elif [[ "$1" == "domains:list:users" ]]; then
+  ./appcli cli:site:domains:list:users $2
+
+elif [[ "$1" == "domains:list:search" ]]; then
+  ./appcli cli:site:domains:list:search $2
+
+elif [ "$1" == "item:add" ]; then
+  ./appcli cli:site:item:add $2 $3 $4
+
+elif [ "$1" == "item:update" ]; then
+  ./appcli cli:site:item:update $2 $3 $4
+
+elif [ "$1" == "item:remove" ]; then
+  ./appcli cli:site:item:remove $2 $3 $4
+
+else
+  help
+fi
