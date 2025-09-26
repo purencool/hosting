@@ -62,7 +62,7 @@ pwd_path=$(pwd)
 ##
 # Install application.
 ##
-git clone https://github.com/purencool/sitewpro.git app
+git clone https://github.com/purencool/hosting.git app
 mkdir hosting
 mkdir hosting/config
 cd $pwd_path'/app'
