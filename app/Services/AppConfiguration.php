@@ -39,7 +39,7 @@ class AppConfiguration
      * @param string $siteName
      * @param array $arrayUpdates
      * @param string $environment
-     * @return string
+     * @return array
      */
     public function update(string $siteName, array $arrayUpdates, string $environment = 'all'): array
     {
@@ -50,7 +50,7 @@ class AppConfiguration
         $siteArray = (new SiteConfiguration())->getSitesConfiguration($siteName);
         $upDatedArray = (new ArrayUpdate())->update($siteArray, $arrayUpdates, $environment);
         (new SiteConfiguration())->setDefaultConfiguration($upDatedArray);
-        
+
         if($environment != 'all') {
             return (new SiteConfiguration())->getSitesConfiguration($siteName)[$environment];
         }
@@ -86,8 +86,8 @@ class AppConfiguration
     }
 
     /**
-     * Ge a list of all sites configuration 
-     * 
+     * Ge a list of all sites configuration
+     *
      * @return array
      */
     public function getAllSitesConfiguration(): array

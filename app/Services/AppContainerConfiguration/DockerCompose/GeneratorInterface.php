@@ -7,7 +7,7 @@ namespace App\Services\AppContainerConfiguration\DockerCompose;
  *
  * This class generates proxy configuration for multiple server names.
  *
- * @package App\Services\AppConfigurationCreator
+ * @package App\Services\AppConfigurationConfigration\DockerCompose
  */
 interface GeneratorInterface
 {

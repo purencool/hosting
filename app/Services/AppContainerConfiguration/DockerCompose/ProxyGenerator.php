@@ -15,21 +15,20 @@ use App\Utilities\HostIP;
  *
  * This class generates proxy configuration for multiple server names.
  *
- * @package App\Services\AppConfigurationCreator
+ * @package App\Services\AppConfigurationConfigration\DockerCompose
  */
 class ProxyGenerator extends Generator
 {
-    
+
     /**
-     * An array of server names and their configurations.
-     * 
+     *
      * This array need to create the following proxy configuration:
-     * 
+     *
      * @example
      * ```
      *  server {
      *    listen 80;
-     *    server_name <domaian1> <domain2>;
+     *    server_name <domain1> <domain2>;
      *    location / {
      *       proxy_pass <domain proxy>:<port>;
      *       proxy_set_header Host $host;
@@ -38,18 +37,18 @@ class ProxyGenerator extends Generator
      *   }
      * ```
      *
-     * @var array
+     * @var string
      */
-    protected string $createdConfigration = '';
+    protected string $createdConfiguration = '';
 
-   /**
-    * 
-    */
+    /**
+     * @var array|\array[][]
+     */
    protected array $proxyYamlArr = [
         'services' => [
             'nginx' => [
                 'image' => 'nginx:latest',
-                'ports' => ['80:80'],   
+                'ports' => ['80:80'],
                 'networks' => ['shared_app_network_hosting'],
                 'volumes' => ['./../proxy/nginx.conf:/etc/nginx/conf.d/default.conf:ro'],
             ],
@@ -57,21 +56,23 @@ class ProxyGenerator extends Generator
         'networks' => [
            'shared_app_network_hosting' => [
                 'external' => true,
-            ],  
+            ],
         ],
     ];
-  
+
 
     /**
-     * 
+     * @param array $appConfig
+     * @param string $port
+     * @return void
      */
     public function setSitesConfiguration(array $appConfig, string $port = "8500") : void
     {
         $uniqueId = $appConfig['unique_id'];
         $domains = $appConfig['domains'];
-        $this->createdConfigration .=  <<<EOT
+        $this->createdConfiguration .=  <<<EOT
 server {
-    listen 80; 
+    listen 80;
     listen [::]:80; # IPV6 needed for local request
     server_name $domains;
 
@@ -82,7 +83,7 @@ server {
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
     }
-} 
+}
 
 server {
     listen 443;
@@ -96,7 +97,7 @@ server {
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
     }
-} 
+}
 
 ##
 # Domains $domains
@@ -106,21 +107,13 @@ EOT;
     }
 
     /**
-     * Generates the configuration for each server name in the array.
-     *
      * @return array
      */
     public function generateConfiguration(): array
     {
-       //$ip = (new HostIP())->get();
-       //$this->proxyYamlArr['services']['nginx']['ports'] = [
-       //   '80:80',
-       //   "$ip:80:80/tcp"
-       //];   
-       
         (new HostingEnvironment())->updateContainerFiles('proxy', 'nginx.conf', $this->createdConfigration);
         return [
-            'proxy' => $this->createdConfigration,
+            'proxy' => $this->createdConfiguration,
             'container' => $this->containerYamlCreation('proxy','docker-composer_proxy.yml', $this->proxyYamlArr),
         ];
     }
@@ -128,7 +121,7 @@ EOT;
     /**
      * @inherited
      */
-    public function fileName():string 
+    public function fileName():string
     {
         return 'proxy/docker-composer_proxy.yml';
     }

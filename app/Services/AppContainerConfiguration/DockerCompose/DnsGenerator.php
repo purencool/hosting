@@ -14,16 +14,16 @@ use App\Utilities\HostIP;
  *
  * This class Dns configuration for multiple server names.
  *
- * @package App\Services\AppConfigurationCreator
+ * @package App\Services\AppConfigurationConfigration\DockerCompose
  */
 class DnsGenerator extends Generator
 {
-    
+
     /**
      * An array of server names and their configurations.
-     * 
+     *
      * This array need to create the following proxy configuration:
-     * 
+     *
      * @example
      *
      * @var array
@@ -31,7 +31,7 @@ class DnsGenerator extends Generator
     protected string $createdConfigration = '';
 
    /**
-    * 
+    *
     */
     protected array $yamlArr = [
         'services' => [
@@ -44,11 +44,11 @@ class DnsGenerator extends Generator
                 'networks' => ['shared_app_network_hosting'],
                 'restart' => 'on-failure',
             ],
-        ],           
+        ],
         'networks' => [
             'shared_app_network_hosting' => [
                 'external' => true,
-            ],  
+            ],
         ],
 
     ];
@@ -56,7 +56,7 @@ class DnsGenerator extends Generator
 
 
     /**
-     * 
+     *
      */
     public function defaultConfiguration() : string
     {
@@ -71,11 +71,11 @@ class DnsGenerator extends Generator
         604800
         3600 )
     IN NS ns1.example.local.
-ns1 IN A $ip 
+ns1 IN A $ip
 
-@   IN A $ip 
-www IN A $ip        
-EOT;       
+@   IN A $ip
+www IN A $ip
+EOT;
 
         (new HostingEnvironment())->updateContainerFiles('dns', 'example.local.db', $zone);
 
@@ -104,7 +104,7 @@ EOT;
 
 
     /**
-     * 
+     *
      */
     public function setSitesDnsConfiguration(array $appConfig, string $port = "8500") : void
     {
@@ -137,9 +137,9 @@ $domains. IN A $ip
 EOT;
 
         (new HostingEnvironment())->updateContainerFiles('dns', "$domains.db", $config);
-    
+
     }
-  
+
     /**
      * Generates the configuration for each server name in the array.
      *
@@ -149,15 +149,15 @@ EOT;
     {
         return [
             'configuration' => $this->defaultConfiguration(),
-            'container' => $this->containerYamlCreation('dns', 'docker-composer_dns.yml', $this->yamlArr), 
+            'container' => $this->containerYamlCreation('dns', 'docker-composer_dns.yml', $this->yamlArr),
         ];
     }
 
-    
+
     /**
      * @inherit
      */
-    public function fileName():string 
+    public function fileName():string
     {
         return 'dns/docker-composer_dns.yml';
     }

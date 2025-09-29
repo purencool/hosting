@@ -7,8 +7,9 @@
 function help(){
     echo ''
     echo '--------------------------------------------------------------------------------------------------'
-    echo ' Commands you can use.                                                                            '
+    echo ' App Commands.                                                                                    '
     echo '--------------------------------------------------------------------------------------------------'
+    ehco ' app:check:dns                                                                                    '
     echo ' app:logs:dns                                                                                     '
     echo ' app:start                                                                                        '
     echo ' app:stop                                                                                         '
@@ -47,14 +48,10 @@ function updateApp() {
 ##
 # Manage dns
 ##
-function enableDns(){
-  sudo systemctl stop systemd-resolved
-  sudo systemctl disable --now systemd-resolved
-  sudo systemctl mask systemd-resolved
-  sudo rm /etc/resolv.conf
-  echo "nameserver 127.0.0.1" | sudo tee /etc/resolv.conf
-  echo "nameserver 8.8.8.8" |  sudo tee /etc/resolv.conf
-  sudo systemctl restart NetworkManager
+function checkDns(){
+  sudo ss -ltnp | grep ':53'
+  sudo ss -lunp | grep ':53'
+  sudo docker ps --filter publish=53 -a --format 'table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Ports}}'
 }
 
 function disableDns(){
@@ -77,6 +74,20 @@ function disableDns(){
   sudo systemctl status systemd-resolved --no-pager || true
   # resolvectl status || true
 }
+
+function enableDns(){
+  sudo systemctl stop systemd-resolved
+  sudo systemctl disable --now systemd-resolved
+  sudo systemctl mask systemd-resolved
+  sudo rm /etc/resolv.conf
+  echo "nameserver 127.0.0.1" | sudo tee /etc/resolv.conf
+  echo "nameserver 8.8.8.8" |  sudo tee /etc/resolv.conf
+    if systemctl list-units --type=service --state=running | grep -Ei 'gdm|lightdm|sddm|lxdm|xdm|wayland' >/dev/null 2>&1; then
+      sudo systemctl restart NetworkManager
+    fi
+}
+
+
 
 ##
 # Docker commands.

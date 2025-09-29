@@ -8,15 +8,27 @@ namespace App\Services\AppSitesConfiguration\Items;
  */
 class ArrayRemove
 {
-    private $array = [];
+    /**
+     * @var array
+     */
+    private array $array = [];
 
-    public function setArray(array $array)
+    /**
+     * @param array $array
+     * @return $this
+     */
+    public function setArray(array $array): static
     {
         $this->array = $array;
         return $this;
     }
 
-    public function remove(array $path, $childKeyToUnset)
+    /**
+     * @param array $path
+     * @param $childKeyToUnset
+     * @return $this
+     */
+    public function remove(array $path, $childKeyToUnset): static
     {
         $ref =& $this->array;
         foreach ($path as $key) {
@@ -31,7 +43,10 @@ class ArrayRemove
         return $this;
     }
 
-    public function getArray()
+    /**
+     * @return array
+     */
+    public function getArray(): array
     {
         return $this->array;
     }

@@ -10,7 +10,7 @@ use App\Services\EnvironmentVariables;
  *
  * Handles retrieval of hosting environment variables and directory creation.
  *
- * @package App\Services
+ * @package App\ServicesDirectoryStructure
  */
 class HostingEnvironment
 {
@@ -259,16 +259,16 @@ class HostingEnvironment
 
     /**
      * Create backup of container configuration.
-     *  
-     * @return array 
+     *
+     * @return array
      */
     public function createContainerConfigBackup() : array
     {
-        $sourceDir = $this->getContainersDirectoryPath(); 
-        $destinationDir = $this->getContainersBackupDirectoryPath(); 
+        $sourceDir = $this->getContainersDirectoryPath();
+        $destinationDir = $this->getContainersBackupDirectoryPath();
 
         // Generate a timestamped name for the compressed archive
-        $timestamp = date('Ymd_His'); 
+        $timestamp = date('Ymd_His');
         $archiveName = basename($sourceDir) . '_' . $timestamp . '.zip';
         $tempArchiveFilePath = sys_get_temp_dir() . '/' . $archiveName;
         $finalArchiveFilePath = $destinationDir . '/' . $archiveName;
@@ -308,7 +308,7 @@ class HostingEnvironment
                 $return[] = ["Compressed archive moved to: " . $finalArchiveFilePath];
             } else {
                 $return[] = ["Error moving the compressed archive."];
-                unlink($tempArchiveFilePath); 
+                unlink($tempArchiveFilePath);
             }
         } else {
             $return[] = ["Error creating ZIP archive."];
@@ -322,16 +322,16 @@ class HostingEnvironment
      * @param string $directory
      * @param string $fileName
      * @param string $data
-     * @return array 
+     * @return array
      */
     public function updateContainerFiles($directory,$fileName,$data) : array
     {
-       
-        $dirPath = $this->getContainersDirectoryPath(); 
+
+        $dirPath = $this->getContainersDirectoryPath();
         if(!is_dir($dirPath.'/'.$directory)){
             mkdir($dirPath.'/'.$directory);
         }
-     
+
         file_put_contents($dirPath.'/'.$directory.'/'.$fileName, $data);
         return ['Configuration update to '.$fileName];
     }

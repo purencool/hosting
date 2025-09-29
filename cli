@@ -7,8 +7,8 @@ fi
 path=$(pwd)
 config_path=$path'/../hosting/config/containers'
 
-if [[ "$1" == "build:containers" ]]; then
-   ./appcli cli:build:containers
+if [[ "$1" == "app:check:dns" ]]; then
+  checkDns
 
 elif [[ "$1" == "app:start" ]]; then
   enableDns
@@ -24,6 +24,9 @@ elif [[ "$1" == "app:update" ]]; then
 
 elif [[ "$1" == "app:logs:dns" ]]; then
   dnsLogs;
+
+elif [[ "$1" == "build:containers" ]]; then
+   ./appcli cli:build:containers  
 
 elif [[ "$1" == "config" ]]; then
   ./appcli cli:site:config $2

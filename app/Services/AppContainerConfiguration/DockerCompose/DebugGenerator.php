@@ -8,19 +8,19 @@ namespace App\Services\AppContainerConfiguration\DockerCompose;
  *
  * This class Debug configuration for multiple server names.
  *
- * @package App\Services\AppConfigurationCreator
+ * @package App\Services\AppConfigurationConfigration\DockerCompose
  */
 class DebugGenerator extends Generator
 {
-       
-  /**
-    *  
-    */
+
+    /**
+     * @var array|\array[][]
+     */
    protected array $proxyYamlArr = [
         'services' => [
             'debug' => [
-                'image' => 'busybox:latest', 
-                'command' => 'sleep 3600', 
+                'image' => 'busybox:latest',
+                'command' => 'sleep 3600',
                 'networks' => ['shared_app_network_hosting'],
                 'restart' => 'no'
             ],
@@ -28,7 +28,7 @@ class DebugGenerator extends Generator
         'networks' => [
            'shared_app_network_hosting' => [
                 'external' => true,
-            ],  
+            ],
         ],
     ];
 
@@ -48,7 +48,7 @@ class DebugGenerator extends Generator
     /**
      * @inherit
      */
-    public function fileName():string 
+    public function fileName():string
     {
         return 'debug/docker-composer_debug.yml';
     }

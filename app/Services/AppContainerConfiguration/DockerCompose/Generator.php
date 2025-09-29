@@ -14,17 +14,15 @@ use Symfony\Component\Yaml\Yaml;
  *
  * This class generates configuration for multiple server.
  *
- * @package App\Services\AppConfigurationCreator
+ * @package App\Services\AppConfigurationConfigration\DockerCompose
  */
 class Generator implements GeneratorInterface
 {
     /**
-     * An string directory name.
-     *
-     * @var $directory
+     * @var string
      */
     protected string $directory = 'default';
-    
+
     /**
      * An array for the server and configurations.
      *
@@ -33,21 +31,21 @@ class Generator implements GeneratorInterface
     protected array $config = [];
 
     /**
-     * 
      * Yaml configuration file.
-     * 
+     *
+     * @var array
      */
     protected array $yamlArr = [];
 
     /**
      * Recursively creates configuration blocks from an associative array.
      *
-     * @param array $config The configuration array.
-     * @param int $indentLevel The current indentation level.
-     * @return string The generated Nginx configuration block.
+     * @param array $config
+     * @param int $indentLevel
+     * @return string
      */
     protected function createConfigBlock(array $config, int $indentLevel = 0): string
-    { 
+    {
         $indent = str_repeat('    ', $indentLevel);
         $pConfig = '';
 
@@ -64,10 +62,13 @@ class Generator implements GeneratorInterface
         return $pConfig;
     }
 
-   
+
     /**
-     * Create the configuration for the Nginx server.
-     * 
+     * Creates service configuration.
+     *
+     * @param $directory
+     * @param $fileName
+     * @param $config
      * @return array
      */
     public function configCreation($directory, $fileName, $config): array
@@ -85,8 +86,11 @@ class Generator implements GeneratorInterface
 
 
     /**
-     * Create yaml server configuration.
-     * 
+     * Creates yaml files
+     *
+     * @param $directory
+     * @param $fileName
+     * @param $yamlArr
      * @return array
      */
     public function containerYamlCreation($directory, $fileName, $yamlArr): array
@@ -99,7 +103,7 @@ class Generator implements GeneratorInterface
     /**
      * @inherit
      */
-    public function fileName():string 
+    public function fileName():string
     {
         return 'generator';
     }

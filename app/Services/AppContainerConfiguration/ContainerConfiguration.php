@@ -23,15 +23,15 @@ class ContainerConfiguration
     /**
      * List of ports already used.
      *
-     * @var int[]
+     * @var int
      */
     protected int $usedPortNumber = 7500;
 
-  
+
     /**
      * Generate a Composer Compose file using a generator class.
-     * 
-     * @param $type 
+     *
+     * @param $type
      *   Setting up for different types of containerisation.
      * @param $dns
      *   Setting up for different types of dns configuration
@@ -40,7 +40,7 @@ class ContainerConfiguration
      */
     public function generate(string $type = 'docker_compose' , $dns = 'cordns'): array
     {
-    
+
         $startStop = new StartStopGenerator();
 
         $request = (new JsonRequestObject())->getResults([
@@ -50,12 +50,12 @@ class ContainerConfiguration
         ]);
 
         $dns = new DnsGenerator();
-        $startStop->setPathAndFileNames($dns->fileName()); 
+        $startStop->setPathAndFileNames($dns->fileName());
         $proxy = new ProxyGenerator();
-        $startStop->setPathAndFileNames($proxy->fileName()); 
+        $startStop->setPathAndFileNames($proxy->fileName());
         $debug = new DebugGenerator();
-        $startStop->setPathAndFileNames($debug->fileName()); 
-        
+        $startStop->setPathAndFileNames($debug->fileName());
+
         $returnContainer = [];
         foreach ($request as $site) {
             // Proxy server
@@ -68,8 +68,8 @@ class ContainerConfiguration
             if($site['container'] == 'Apache') {
                 $apache = new ApacheGenerator();
                 $apache->setConfiguration($site,$this->usedPortNumber);
-                
-                $startStop->setPathAndFileNames($apache->fileName()); 
+
+                $startStop->setPathAndFileNames($apache->fileName());
                 $returnContainer[] = $apache->generateConfiguration();
 
             } elseif ($site['container'] == 'Drupal') {
@@ -80,7 +80,7 @@ class ContainerConfiguration
 
             $this->usedPortNumber++;
         }
-        
+
         return ['configuration' => [
             'dns' => $dns->generateConfiguration(),
             'proxy' => $proxy->generateConfiguration(),

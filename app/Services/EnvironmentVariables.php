@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\App;
 
+/**
+ *
+ */
 class EnvironmentVariables
 {
 
