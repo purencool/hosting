@@ -48,6 +48,7 @@ class ProxyGenerator extends Generator
         'services' => [
             'nginx' => [
                 'image' => 'nginx:latest',
+                'container_name' => "proxy_services",
                 'ports' => ['80:80'],
                 'networks' => ['shared_app_network_hosting'],
                 'volumes' => ['./../proxy/nginx.conf:/etc/nginx/conf.d/default.conf:ro'],
@@ -111,7 +112,7 @@ EOT;
      */
     public function generateConfiguration(): array
     {
-        (new HostingEnvironment())->updateContainerFiles('proxy', 'nginx.conf', $this->createdConfigration);
+        (new HostingEnvironment())->updateContainerFiles('proxy', 'nginx.conf', $this->createdConfiguration);
         return [
             'proxy' => $this->createdConfiguration,
             'container' => $this->containerYamlCreation('proxy','docker-composer_proxy.yml', $this->proxyYamlArr),

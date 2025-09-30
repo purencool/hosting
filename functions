@@ -87,10 +87,12 @@ function enableDns(){
     fi
 }
 
-
+function dnsLogs(){
+  docker logs coredns 2>&1 | tail -n 200
+}
 
 ##
-# Docker commands.
+# Helpers.
 ##
 function deleteLogs(){
   for CID in $(docker ps -q); do
@@ -101,6 +103,3 @@ function deleteLogs(){
   done
 }
 
-function dnsLogs(){
-  docker logs coredns 2>&1 | tail -n 200
-}

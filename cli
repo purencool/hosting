@@ -7,26 +7,35 @@ fi
 path=$(pwd)
 config_path=$path'/../hosting/config/containers'
 
-if [[ "$1" == "app:check:dns" ]]; then
-  checkDns
+if [[ "$1" == "app:dns:check" ]]; then
+  dnsCheck
+
+elif [[ "$1" == "app:dns:logs" ]]; then
+  dnsLogs;
+
+elif [[ "$1" == "app:proxy:check" ]]; then
+  proxyCheck
+
+elif [[ "$1" == "app:proxy:logs" ]]; then
+  proxyLogs
+
+elif [[ "$1" == "app:purge" ]]; then
+  purgeDocker
 
 elif [[ "$1" == "app:start" ]]; then
-  enableDns
+  dnsEnable
   bash "$(pwd)/../hosting/config/containers/start.sh" "$config_path"
 
 elif [[ "$1" == "app:stop" ]]; then
   bash "$(pwd)/../hosting/config/containers/stop.sh" "$config_path"
-  disableDns
-  
-elif [[ "$1" == "app:update" ]]; then
-  updateDebian;
-  updateApp;
+  dnsDisable
 
-elif [[ "$1" == "app:logs:dns" ]]; then
-  dnsLogs;
+elif [[ "$1" == "app:update" ]]; then
+  updateDebian
+  updateApp
 
 elif [[ "$1" == "build:containers" ]]; then
-   ./appcli cli:build:containers  
+   ./appcli cli:build:containers
 
 elif [[ "$1" == "config" ]]; then
   ./appcli cli:site:config $2
@@ -39,7 +48,7 @@ elif [ "$1" == "create" ]; then
 
 elif [[ "$1" == "domains:add" ]]; then
    ./appcli cli:site:domains:add $2
-   
+
 elif [[ "$1" == "domains:list" ]]; then
   ./appcli cli:site:domains:list $2
 
@@ -60,4 +69,5 @@ elif [ "$1" == "item:remove" ]; then
 
 else
   help
+
 fi

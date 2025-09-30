@@ -44,7 +44,7 @@ class ApacheGenerator extends Generator
          'services' => [
                 $uniqueId => [
                     'image' => 'httpd:alpine3.22',
-                    'container_name' => "apache_$uniqueId",
+                    'container_name' => "$uniqueId",
                     'ports' => [ $port .':80'],
                     'volumes' => [''. $volumes.':/usr/local/apache2/htdocs'],
                     'networks' => ['shared_app_network_hosting']
