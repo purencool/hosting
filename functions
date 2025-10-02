@@ -9,8 +9,11 @@ function help(){
     echo '--------------------------------------------------------------------------------------------------'
     echo ' App Commands.                                                                                    '
     echo '--------------------------------------------------------------------------------------------------'
-    ehco ' app:check:dns                                                                                    '
-    echo ' app:logs:dns                                                                                     '
+    echo ' app:dns:check                                                                                    '
+    echo ' app:dns:logs                                                                                     '
+    echo ' app:container:names                                                                             '
+    echo ' app:proxy:check                                                                                  '
+    echo ' app:proxy:logs                                                                                   '
     echo ' app:start                                                                                        '
     echo ' app:stop                                                                                         '
     echo ' app:update                                                                                       '
@@ -48,13 +51,13 @@ function updateApp() {
 ##
 # Manage dns
 ##
-function checkDns(){
+function dnsCheck(){
   sudo ss -ltnp | grep ':53'
   sudo ss -lunp | grep ':53'
   sudo docker ps --filter publish=53 -a --format 'table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Ports}}'
 }
 
-function disableDns(){
+function dnsDisable(){
   sudo systemctl unmask systemd-resolved || true
   sudo systemctl daemon-reload
   if ! sudo systemctl enable --now systemd-resolved; then
@@ -75,7 +78,7 @@ function disableDns(){
   # resolvectl status || true
 }
 
-function enableDns(){
+function dnsEnable(){
   sudo systemctl stop systemd-resolved
   sudo systemctl disable --now systemd-resolved
   sudo systemctl mask systemd-resolved
@@ -92,6 +95,51 @@ function dnsLogs(){
 }
 
 ##
+# Debug 
+##
+function debugSSHCheck(){
+  docker ps --filter "name=debug" --filter "status=running" -q >/dev/null && \
+  docker exec debug ls -hal || \
+  echo "container not running or exec failed"
+}
+
+function debugDNSCheck(){
+  docker exec debug ping -c 1 coredns
+  if (( $# >= 2 )); then
+    docker exec debug cat /etc/resolv.conf
+    docker exec debug dig $2 +trace
+    docker exec debug dig @coredns $2 +noall +answer +stats
+  else
+    docker exec debug cat /etc/resolv.conf
+    docker exec debug dig example.local +trace
+    docker exec debug dig @coredns example.local +noall +answer +stats
+  fi
+}
+
+function debugProxyCheck(){
+  if (( $# >= 2 )); then
+   echo ''
+  else
+   echo ''
+  fi
+}
+
+
+##
+# Manage proxy
+##
+function proxyCheck(){
+  sudo ss -ltnp | grep ':443'
+  sudo ss -ltnp | grep ':80'
+  sudo docker ps --filter publish=80 -a --format 'table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Ports}}'
+}
+
+function proxyLogs(){
+  docker logs proxy_services 2>&1 | tail -n 200
+}
+
+
+##
 # Helpers.
 ##
 function deleteLogs(){
@@ -101,5 +149,17 @@ function deleteLogs(){
       sudo truncate -s 0 "$LOG"
     fi
   done
+}
+
+##
+# Docker helpers
+##
+function dockerPurge(){
+  docker ps -aq | ForEach-Object { docker rm -f $_ }
+  docker ps
+}
+
+function dockerContainersNames(){
+   docker ps --format '{{.Names}}'
 }
 

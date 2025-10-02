@@ -7,11 +7,18 @@ fi
 path=$(pwd)
 config_path=$path'/../hosting/config/containers'
 
-if [[ "$1" == "app:dns:check" ]]; then
+if [[ "$1" == "app:debug" ]]; then
+  debugSSHCheck "$@"
+  debugDNSCheck "$@" 
+  debugProxyCheck "$@"
+elif [[ "$1" == "app:dns:check" ]]; then
   dnsCheck
 
 elif [[ "$1" == "app:dns:logs" ]]; then
   dnsLogs;
+
+elif [[ "$1" == "app:container:names" ]]; then
+  dockerContainersNames
 
 elif [[ "$1" == "app:proxy:check" ]]; then
   proxyCheck
@@ -20,7 +27,9 @@ elif [[ "$1" == "app:proxy:logs" ]]; then
   proxyLogs
 
 elif [[ "$1" == "app:purge" ]]; then
-  purgeDocker
+  bash "$(pwd)/../hosting/config/containers/stop.sh" "$config_path"
+  dnsDisable
+  dockerPurge
 
 elif [[ "$1" == "app:start" ]]; then
   dnsEnable

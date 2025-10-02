@@ -19,7 +19,8 @@ class DebugGenerator extends Generator
    protected array $proxyYamlArr = [
         'services' => [
             'debug' => [
-                'image' => 'busybox:latest',
+                'image' => 'maliksalman/jump',
+                'container_name' => 'debug',
                 'command' => 'sleep 3600',
                 'networks' => ['shared_app_network_hosting'],
                 'restart' => 'no'
