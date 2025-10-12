@@ -23,7 +23,7 @@ class DebugGenerator extends Generator
                 'container_name' => 'debug',
                 'command' => 'sleep 3600',
                 'networks' => ['shared_app_network_hosting'],
-                'restart' => 'no'
+                'restart' => 'on-failure',
             ],
         ],
         'networks' => [

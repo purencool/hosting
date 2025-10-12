@@ -95,7 +95,7 @@ class Generator implements GeneratorInterface
      */
     public function containerYamlCreation($directory, $fileName, $yamlArr): array
     {
-        $config = Yaml::dump($yamlArr, 4, 2, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
+        $config = Yaml::dump($yamlArr, 4, 2, Yaml::DUMP_OBJECT_AS_MAP);
         (new HostingEnvironment())->updateContainerFiles($directory, $fileName, $config);
         return [];
     }

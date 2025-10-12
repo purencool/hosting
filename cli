@@ -11,6 +11,9 @@ if [[ "$1" == "app:debug" ]]; then
   debugSSHCheck "$@"
   debugDNSCheck "$@" 
   debugProxyCheck "$@"
+elif [[ "$1" == "app:debug:network" ]]; then
+  debugNetwork
+
 elif [[ "$1" == "app:dns:check" ]]; then
   dnsCheck
 
@@ -19,6 +22,9 @@ elif [[ "$1" == "app:dns:logs" ]]; then
 
 elif [[ "$1" == "app:container:names" ]]; then
   dockerContainersNames
+
+elif [[ "$1" == "app:container:stopped" ]]; then
+  dockerContainersStopped
 
 elif [[ "$1" == "app:proxy:check" ]]; then
   proxyCheck

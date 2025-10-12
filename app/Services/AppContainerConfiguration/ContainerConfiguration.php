@@ -2,6 +2,7 @@
 
 namespace App\Services\AppContainerConfiguration;
 
+use App\Services\AppContainerConfiguration\DockerCompose\AI;
 use App\Services\AppContainerConfiguration\DockerCompose\ApacheGenerator;
 use App\Services\AppContainerConfiguration\DockerCompose\DnsGenerator;
 use App\Services\AppContainerConfiguration\DockerCompose\ProxyGenerator;
@@ -49,13 +50,17 @@ class ContainerConfiguration
             'request_data' => 'all'
         ]);
 
+
         $dns = new DnsGenerator();
         $startStop->setPathAndFileNames($dns->fileName());
         $proxy = new ProxyGenerator();
+        $proxy->setSitesHeaderConfiguration();
         $startStop->setPathAndFileNames($proxy->fileName());
         $debug = new DebugGenerator();
         $startStop->setPathAndFileNames($debug->fileName());
-
+        $ai = new AI();
+        $startStop->setPathAndFileNames($ai->fileName());
+        
         $returnContainer = [];
         foreach ($request as $site) {
             // Proxy server
@@ -82,6 +87,7 @@ class ContainerConfiguration
         }
 
         return ['configuration' => [
+            'ai' => $ai->generateConfiguration(),
             'dns' => $dns->generateConfiguration(),
             'proxy' => $proxy->generateConfiguration(),
             'apache' => $returnContainer,

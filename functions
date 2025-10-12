@@ -9,9 +9,12 @@ function help(){
     echo '--------------------------------------------------------------------------------------------------'
     echo ' App Commands.                                                                                    '
     echo '--------------------------------------------------------------------------------------------------'
+    echo ' app:debug                                                                                        '
+    echo ' app:debug:network                                                                                '
     echo ' app:dns:check                                                                                    '
     echo ' app:dns:logs                                                                                     '
-    echo ' app:container:names                                                                             '
+    echo ' app:container:names                                                                              '
+    echo ' app:container:stopped                                                                            '
     echo ' app:proxy:check                                                                                  '
     echo ' app:proxy:logs                                                                                   '
     echo ' app:start                                                                                        '
@@ -49,12 +52,25 @@ function updateApp() {
 }
 
 ##
+# AI logs
+##
+function WebUIAILogs(){
+  docker logs open-webui 2>&1 | tail -n 200
+}
+
+function BackEndAILogs(){
+  docker logs ollama 2>&1 | tail -n 200
+}
+
+##
 # Manage dns
 ##
 function dnsCheck(){
   sudo ss -ltnp | grep ':53'
   sudo ss -lunp | grep ':53'
   sudo docker ps --filter publish=53 -a --format 'table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Ports}}'
+  dig @127.0.0.1 registry-1.docker.io
+  dig @8.8.8.8 registry-1.docker.io
 }
 
 function dnsDisable(){
@@ -84,10 +100,10 @@ function dnsEnable(){
   sudo systemctl mask systemd-resolved
   sudo rm /etc/resolv.conf
   echo "nameserver 127.0.0.1" | sudo tee /etc/resolv.conf
-  echo "nameserver 8.8.8.8" |  sudo tee /etc/resolv.conf
-    if systemctl list-units --type=service --state=running | grep -Ei 'gdm|lightdm|sddm|lxdm|xdm|wayland' >/dev/null 2>&1; then
-      sudo systemctl restart NetworkManager
-    fi
+  echo "nameserver 1.1.1.1" |  sudo tee -a /etc/resolv.conf
+  if systemctl list-units --type=service --state=running | grep -Ei 'gdm|lightdm|sddm|lxdm|xdm|wayland' >/dev/null 2>&1; then
+    sudo systemctl restart NetworkManager
+  fi
 }
 
 function dnsLogs(){
@@ -97,6 +113,10 @@ function dnsLogs(){
 ##
 # Debug 
 ##
+function debugNetwork(){
+  docker network inspect shared_app_network_hosting
+}
+
 function debugSSHCheck(){
   docker ps --filter "name=debug" --filter "status=running" -q >/dev/null && \
   docker exec debug ls -hal || \
@@ -117,6 +137,7 @@ function debugDNSCheck(){
 }
 
 function debugProxyCheck(){
+  docker exec debug ping -c 1 proxy_services
   if (( $# >= 2 )); then
    echo ''
   else
@@ -137,6 +158,8 @@ function proxyCheck(){
 function proxyLogs(){
   docker logs proxy_services 2>&1 | tail -n 200
 }
+
+
 
 
 ##
@@ -160,6 +183,9 @@ function dockerPurge(){
 }
 
 function dockerContainersNames(){
-   docker ps --format '{{.Names}}'
+  docker ps --format '{{.Names}}'
 }
 
+function dockerContainersStopped(){
+  docker ps -a --filter "status=exited" --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}}"
+}

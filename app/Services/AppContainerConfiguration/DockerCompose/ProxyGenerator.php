@@ -42,26 +42,41 @@ class ProxyGenerator extends Generator
     protected string $createdConfiguration = '';
 
     /**
-     * @var array|\array[][]
+     * @return void
      */
-   protected array $proxyYamlArr = [
-        'services' => [
-            'nginx' => [
-                'image' => 'nginx:latest',
-                'container_name' => "proxy_services",
-                'ports' => ['80:80'],
-                'networks' => ['shared_app_network_hosting'],
-                'volumes' => ['./../proxy/nginx.conf:/etc/nginx/conf.d/default.conf:ro'],
-            ],
-        ],
-        'networks' => [
-           'shared_app_network_hosting' => [
-                'external' => true,
-            ],
-        ],
-    ];
+    public function setSitesHeaderConfiguration() : void
+    {
+        $this->createdConfiguration .=  <<<EOT
+user  nginx;
+worker_processes  auto;
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+    keepalive_timeout  65;
+    include /etc/nginx/conf.d/*.conf;
+  
+
+EOT;
+    }
 
 
+     /**
+     * @return void
+     */
+    public function setSitesFooterConfiguration() : void
+    {
+        $this->createdConfiguration .=  <<<EOT
+}
+EOT;
+    }   
     /**
      * @param array $appConfig
      * @param string $port
@@ -74,7 +89,7 @@ class ProxyGenerator extends Generator
         $this->createdConfiguration .=  <<<EOT
 server {
     listen 80;
-    listen [::]:80; # IPV6 needed for local request
+    listen [::]:80;
     server_name $domains;
 
     location / {
@@ -86,23 +101,6 @@ server {
     }
 }
 
-server {
-    listen 443;
-    listen [::]:443; # IPV6 needed for local request
-    server_name $domains;
-
-    location / {
-        proxy_pass http://$uniqueId:$port;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-    }
-}
-
-##
-# Domains $domains
-##
 
 EOT;
     }
@@ -112,10 +110,34 @@ EOT;
      */
     public function generateConfiguration(): array
     {
+        $this->setSitesFooterConfiguration();
         (new HostingEnvironment())->updateContainerFiles('proxy', 'nginx.conf', $this->createdConfiguration);
+
+
+        $containerPath = (new HostingEnvironment())->getContainersDirectoryPath();
+        $proxyYamlArr = [
+                'services' => [
+                    'nginx' => [
+                    'image' => 'nginx:latest',
+                    'container_name' => "proxy_services",
+                    'ports' => ['80:80'],
+                    'networks' => ['shared_app_network_hosting'],
+                    'volumes' => ["$containerPath/proxy/nginx.conf:/etc/nginx/nginx.conf"],
+                    'restart' => 'on-failure',
+                ],
+            ],
+            'networks' => [
+                'shared_app_network_hosting' => [
+                    'external' => true,
+                ],
+            ],
+        ];
+
+
+
         return [
             'proxy' => $this->createdConfiguration,
-            'container' => $this->containerYamlCreation('proxy','docker-composer_proxy.yml', $this->proxyYamlArr),
+            'container' => $this->containerYamlCreation('proxy','docker-composer_proxy.yml', $proxyYamlArr),
         ];
     }
 

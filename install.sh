@@ -55,6 +55,14 @@ if [[ "$1" == "centos" ]]; then
 fi
 
 ##
+# Install AI hosted module.
+##
+if [[ "$2" == "ai" ]]; then
+  curl -fsSL https://ollama.com/install.sh | sh
+fi
+
+
+##
 # Application path.
 ##
 pwd_path=$(pwd)
