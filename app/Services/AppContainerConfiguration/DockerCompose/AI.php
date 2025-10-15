@@ -2,7 +2,6 @@
 
 namespace App\Services\AppContainerConfiguration\DockerCompose;
 
-
 /**
  * Class AI
  *
@@ -12,8 +11,6 @@ namespace App\Services\AppContainerConfiguration\DockerCompose;
  */
 class AI extends Generator
 {
-
-
 
     /**
      * Generates the configuration for each server name in the array.
@@ -30,7 +27,7 @@ class AI extends Generator
             'ollama' => [
                 'image' => 'ollama/ollama',
                 'container_name' => 'ollama',
-                'ports' => ['8080:8080'],
+                'ports' => ['11434:11434'],
                 'volumes' => ['ollama_models:/root/.ollama'],
                 'networks' => ['shared_app_network_hosting'],
                 'restart' => 'always',
@@ -38,8 +35,8 @@ class AI extends Generator
             'open-webui' => [
                 'image' => 'ghcr.io/open-webui/open-webui:main',
                 'container_name' => 'open-webui',
-                'ports' => ['11434:11434'],
-                'environment' => ['OLLAMA_BASE_URL=http://ollama:8080'],
+                'ports' => ['8080:8080'],
+                'environment' => ['OLLAMA_BASE_URL=http://ollama:11434'],
                 'volumes' => ['open-webui_data:/app/backend/data'],
                 'depends_on' => ['ollama'],
                 'networks' => ['shared_app_network_hosting'],
@@ -56,9 +53,7 @@ class AI extends Generator
             ],
         ],
     ];
-       
-       
-      
+
         return [
             'container' => $this->containerYamlCreation('ai','docker-composer_ai.yml',  $proxyYamlArr),
         ];

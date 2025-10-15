@@ -9,12 +9,20 @@ function help(){
     echo '--------------------------------------------------------------------------------------------------'
     echo ' App Commands.                                                                                    '
     echo '--------------------------------------------------------------------------------------------------'
+    echo ' app:ai:logs:backend                                                                              '
+    echo ' app:ai:logs:frontend                                                                             '
+    echo ' app:ai:list                                                                                      '
     echo ' app:debug                                                                                        '
     echo ' app:debug:network                                                                                '
     echo ' app:dns:check                                                                                    '
     echo ' app:dns:logs                                                                                     '
+    echo ' app:domain                                                                                       '
     echo ' app:container:names                                                                              '
     echo ' app:container:stopped                                                                            '
+    echo ' app:ide:install                                                                                  '
+    echo ' app:ide:uninstall                                                                                '
+    echo ' app:ide:start                                                                                    '
+    echo ' app:ide:stop                                                                                     '
     echo ' app:proxy:check                                                                                  '
     echo ' app:proxy:logs                                                                                   '
     echo ' app:start                                                                                        '
@@ -43,7 +51,7 @@ function updateDebian() {
 }
 
 function updateRel() {
-  sudo yum update -y & sudo yum upgrade -y    
+  sudo yum update -y & sudo yum upgrade -y
 }
 
 function updateApp() {
@@ -54,12 +62,17 @@ function updateApp() {
 ##
 # AI logs
 ##
-function WebUIAILogs(){
+function frontendAILogs(){
   docker logs open-webui 2>&1 | tail -n 200
 }
 
-function BackEndAILogs(){
+function backendAILogs(){
   docker logs ollama 2>&1 | tail -n 200
+}
+
+function llmAIList(){
+  docker ps -a | grep ollama
+  #| awk '{print $1}') sh -c 'cd /root/.ollama/models && ls'
 }
 
 ##
@@ -86,7 +99,7 @@ function dnsDisable(){
     sudo systemctl status systemd-resolved --no-pager || true
     exit 1
   fi
-  
+
   sudo rm -f /etc/resolv.conf
   sudo ln -sf "$STUB" /etc/resolv.conf
   sudo netplan apply || true
@@ -111,7 +124,7 @@ function dnsLogs(){
 }
 
 ##
-# Debug 
+# Debug
 ##
 function debugNetwork(){
   docker network inspect shared_app_network_hosting
@@ -145,6 +158,19 @@ function debugProxyCheck(){
   fi
 }
 
+##
+# Domains
+##
+function domain(){
+  IP=`hostname -I | awk '{print $1}'`
+  echo $IP
+  echo $2
+  if (( $# >= 2 )); then
+    curl -vI -H "Host:$2" http://$IP 
+  else
+    curl -vI $2
+  fi
+}
 
 ##
 # Manage proxy
@@ -188,4 +214,25 @@ function dockerContainersNames(){
 
 function dockerContainersStopped(){
   docker ps -a --filter "status=exited" --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}}"
+}
+
+
+##
+# Install browser ide. 
+# @todo turn it into Docker container in the future.
+##
+function installIDE(){
+  echo "install ide"
+}
+
+function uninstallIDE(){
+  echo "uninstall ide"
+}
+
+function startIDE(){
+  echo "start ide"  
+}
+
+function stopIDE() {
+  echo "stop ide" 
 }

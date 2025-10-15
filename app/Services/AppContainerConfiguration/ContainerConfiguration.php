@@ -42,15 +42,16 @@ class ContainerConfiguration
     public function generate(string $type = 'docker_compose' , $dns = 'cordns'): array
     {
 
-        $startStop = new StartStopGenerator();
-
+        // Request Json Object for configuration.
         $request = (new JsonRequestObject())->getResults([
             'response_format' => 'raw',
             'request_type' => 'sites_config_all',
             'request_data' => 'all'
         ]);
 
-
+        // Set file and path for each configuration file 
+        // for start and stop scripts.
+        $startStop = new StartStopGenerator();
         $dns = new DnsGenerator();
         $startStop->setPathAndFileNames($dns->fileName());
         $proxy = new ProxyGenerator();
@@ -60,28 +61,44 @@ class ContainerConfiguration
         $startStop->setPathAndFileNames($debug->fileName());
         $ai = new AI();
         $startStop->setPathAndFileNames($ai->fileName());
-        
+
+        // Configuration generation.
         $returnContainer = [];
+        $proxyFlag = 0;
         foreach ($request as $site) {
-            // Proxy server
-            $proxy->setSitesConfiguration($site,80);
 
-            // DNS service
-            $dns->setSitesDnsConfiguration($site,80);
-
-            // Backend containers
+            // Creation of backend containers that can be any type of 
+            // service as it can communicate over port 80 or 443. 
             if($site['container'] == 'Apache') {
                 $apache = new ApacheGenerator();
                 $apache->setConfiguration($site,$this->usedPortNumber);
-
                 $startStop->setPathAndFileNames($apache->fileName());
                 $returnContainer[] = $apache->generateConfiguration();
+                $proxyFlag = 1;
 
             } elseif ($site['container'] == 'Drupal') {
                 $returnContainer[] = 'Drupal';
+
+            } elseif ($site['container'] == 'Laravel') {
+                $returnContainer[] = 'Laravel';
+
             } else {
                 $returnContainer[] = $site['unique_id'].' does not have a container';
+
             }
+
+            // Proxy flag needs to be set to 1 so that it can be added to proxy 
+            // configuration. If it's added without a backed service it breaks
+            // proxy service from working.
+            if($proxyFlag == 1) {
+                // Proxy server configuration.
+                //$proxy->setSitesConfiguration($site,$this->usedPortNumber);
+                $proxy->setSitesConfiguration($site,'80');
+                $proxyFlag = 0;
+            }
+    
+            // DNS service
+            $dns->setSitesDnsConfiguration($site,$this->usedPortNumber);
 
             $this->usedPortNumber++;
         }

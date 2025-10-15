@@ -7,10 +7,20 @@ fi
 path=$(pwd)
 config_path=$path'/../hosting/config/containers'
 
-if [[ "$1" == "app:debug" ]]; then
+if [[ "$1" == "app:ai:logs:backend" ]]; then
+  backendAILogs
+
+elif [[ "$1" == "app:ai:logs:frontend" ]]; then
+  frontendAILogs
+
+elif [[ "$1" == "app:ai:list" ]]; then
+  llmAIList
+
+elif [[ "$1" == "app:debug" ]]; then
   debugSSHCheck "$@"
-  debugDNSCheck "$@" 
+  debugDNSCheck "$@"
   debugProxyCheck "$@"
+
 elif [[ "$1" == "app:debug:network" ]]; then
   debugNetwork
 
@@ -19,6 +29,21 @@ elif [[ "$1" == "app:dns:check" ]]; then
 
 elif [[ "$1" == "app:dns:logs" ]]; then
   dnsLogs;
+
+elif [[ "$1" == "app:domain" ]]; then
+  domain "$@"  
+
+elif [[ "$1" == "app:ide:install" ]]; then
+  installIDE
+
+elif [[ "$1" == "app:ide:uninstall" ]]; then
+  d
+
+elif [[ "$1" == "app:ide:start" ]]; then
+  d
+
+elif [[ "$1" == "app:ide:stop" ]]; then
+  d 
 
 elif [[ "$1" == "app:container:names" ]]; then
   dockerContainersNames

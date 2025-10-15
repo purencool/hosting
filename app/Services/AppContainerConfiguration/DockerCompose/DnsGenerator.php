@@ -89,7 +89,7 @@ example.local:53 {
 $this->createdConfigration
 
 .:53 {
-    forward . 1.1.1.1 1.1.1.1
+    forward . 1.1.1.1
     cache 30
     log
     errors
