@@ -28,6 +28,7 @@ function help(){
     echo ' app:start                                                                                        '
     echo ' app:stop                                                                                         '
     echo ' app:update                                                                                       '
+    echo ' build:certificates    ./appcli cli:build:certificates                                            '
     echo ' build:containers      ./appcli cli:build:containers                                              '
     echo ' config                ./appcli cli:site:config {default.domain}                                  '
     echo ' config:find           ./appcli cli:site:config {default.domain} | jq ".[] | {string}"            '

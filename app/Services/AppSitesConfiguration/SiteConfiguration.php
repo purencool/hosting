@@ -70,6 +70,9 @@ class SiteConfiguration
                 "code" => array(
                     "path" => "code"
                 ), // Code directory.
+                "backups" => array(
+                    "path" => "backups"
+                ), // Site backup directory.
             ),
         ),
         "user" => array(

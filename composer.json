@@ -7,12 +7,22 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+         "acmephp/acmephp": "dev-master",
         "czproject/git-php": "^4.5",
         "griffin-mocker/griffin-mocker": "^0.1.0",
+        "guzzlehttp/guzzle": "^7.10",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "phpdocumentor/shim": "^3.8"
     },
+    
+        "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/acmephp/acmephp"
+    }
+  ],
+
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.2",
