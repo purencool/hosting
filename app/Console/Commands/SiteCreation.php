@@ -105,7 +105,7 @@ class SiteCreation extends Command
                 (new JsonRequestObject())->getResults(
                     [
                         'response_format' => 'raw',
-                        'request_type' => 'sites_creation',
+                        'request_type' => 'site_creation',
                         'request_data' => $resultsFromTheQuestions,
                     ]
                 ),

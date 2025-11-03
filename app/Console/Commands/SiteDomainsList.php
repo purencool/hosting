@@ -57,7 +57,7 @@ class SiteDomainsList extends Command
             json_encode(
                 (new JsonRequestObject())->getResults(
                     [ 
-                        'request_type' => 'sites_list_domains',
+                        'request_type' => 'site_list_domains',
                         'response_format' => 'raw'
                     ]
                 ), 

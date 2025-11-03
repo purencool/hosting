@@ -90,10 +90,22 @@ class AppConfiguration
      *
      * @return array
      */
-    public function getAllSitesConfiguration(): array
+    public function getSiteConfigurationAll(): array
     {
-        return (new SiteConfiguration())->getAllSitesConfiguration();
+        return (new SiteConfiguration())->getSiteConfigurationAll();
     }
+
+
+    /**
+     * Ge a list of all sites configuration
+     *
+     * @return array
+     */
+    public function getSiteConfigurationFind($data): array
+    {
+        return (new SiteConfiguration())->getSiteConfigurationFind($data);
+    }
+
 
     /**
      * Get a list of all domains for all environments.

@@ -1,54 +1,54 @@
 #!/bin/bash
 
-
 ##
 # Help commmands
 ##
 function help(){
     echo ''
-    echo '--------------------------------------------------------------------------------------------------'
-    echo ' App Commands.                                                                                    '
-    echo '--------------------------------------------------------------------------------------------------'
-    echo ' app:ai:logs:backend                                                                              '
-    echo ' app:ai:logs:frontend                                                                             '
-    echo ' app:ai:list                                                                                      '
-    echo ' app:debug                                                                                        '
-    echo ' app:debug:network                                                                                '
-    echo ' app:dns:check                                                                                    '
-    echo ' app:dns:logs                                                                                     '
-    echo ' app:domain                                                                                       '
-    echo ' app:container:names                                                                              '
-    echo ' app:container:stopped                                                                            '
-    echo ' app:ide:install                                                                                  '
-    echo ' app:ide:uninstall                                                                                '
-    echo ' app:ide:start                                                                                    '
-    echo ' app:ide:stop                                                                                     '
-    echo ' app:proxy:check                                                                                  '
-    echo ' app:proxy:logs                                                                                   '
-    echo ' app:start                                                                                        '
-    echo ' app:stop                                                                                         '
-    echo ' app:update                                                                                       '
-    echo ' build:certificates    ./appcli cli:build:certificates                                            '
-    echo ' build:containers      ./appcli cli:build:containers                                              '
-    echo ' config                ./appcli cli:site:config {default.domain}                                  '
-    echo ' config:find           ./appcli cli:site:config {default.domain} | jq ".[] | {string}"            '
-    echo ' create                ./appcli cli:site:creation {default.domain}                                '
-    echo ' domains:add           ./appcli cli:site:domains:add {default.domain}                             '
-    echo ' domains:list          ./appcli cli:site:domains:list {default.domain}                            '
-    echo ' domains:list:users    ./appcli cli:site:domains:list:user {default.domain}                       '
-    echo ' domains:list:search   ./appcli cli:site:domains:list:search {search_string}                      '
-    echo ' item:add              ./appcli cli:site:item:add {default.domain} {environment} {json_string}    '
-    echo ' item:update           ./appcli cli:site:item:update {default.domain} {environment} {json_string} '
-    echo ' item:remove           ./appcli cli:site:item:remove {default.domain} {environment} {json_string} '
-    echo '--------------------------------------------------------------------------------------------------'
+    echo '-----------------------------------------------------------------------------------------------------'
+    echo ' App Commands.                                                                                       '
+    echo '-----------------------------------------------------------------------------------------------------'
+    echo ' app:ai:logs:backend                                                                                 '
+    echo ' app:ai:logs:frontend                                                                                '
+    echo ' app:ai:list                                                                                         '
+    echo ' app:debug                                                                                           '
+    echo ' app:debug:network                                                                                   '
+    echo ' app:dns:check                                                                                       '
+    echo ' app:dns:logs                                                                                        '
+    echo ' app:domain                                                                                          '
+    echo ' app:container:names                                                                                 '
+    echo ' app:container:stopped                                                                               '
+    echo ' app:ide:install                                                                                     '
+    echo ' app:ide:uninstall                                                                                   '
+    echo ' app:ide:start                                                                                       '
+    echo ' app:ide:stop                                                                                        '
+    echo ' app:proxy:check                                                                                     '
+    echo ' app:proxy:logs                                                                                      '
+    echo ' app:start                                                                                           '
+    echo ' app:stats                                                                                           '
+    echo ' app:stop                                                                                            '
+    echo ' app:update                                                                                          '
+    echo ' build:certificates    ./appcli cli:build:certificates                                               '
+    echo ' build:containers      ./appcli cli:build:containers                                                 '
+    echo ' config                ./appcli cli:site:config {default.domain}                                     '
+    echo ' config:find           ./appcli cli:site:config:find {data}                                          ' 
+    echo ' config:remove         ./appcli cli:site:config:remove {default.domain} {environment} {json_string}  '
+    echo ' config:replace        ./appcli cli:site:config:replace {default.domain} {environment} {json_string} '
+    echo ' config:update         ./appcli cli:site:config:update {default.domain} {environment} {json_string}  '
+    echo ' create                ./appcli cli:site:creation {default.domain}                                   '
+    echo ' domains:list          ./appcli cli:site:domains:list {default.domain}                               '
+    echo ' domains:list:users    ./appcli cli:site:domains:list:user {default.domain}                          '
+    echo ' domains:list:search   ./appcli cli:site:domains:list:search {search_string}                         '
+    echo '-----------------------------------------------------------------------------------------------------'
     echo ''
 }
 
 ##
 # Update host packages.
+# @todo findout what type of OS.
 ##
-function updateDebian() {
- sudo apt-get update & sudo apt upgrade
+function updateOS() {
+ sudo apt update && sudo apt upgrade
 }
 
 function updateRel() {
@@ -72,8 +72,7 @@ function backendAILogs(){
 }
 
 function llmAIList(){
-  docker ps -a | grep ollama
-  #| awk '{print $1}') sh -c 'cd /root/.ollama/models && ls'
+  docker exec -it ollama sh -c "ollama ls"
 }
 
 ##
@@ -187,8 +186,6 @@ function proxyLogs(){
 }
 
 
-
-
 ##
 # Helpers.
 ##
@@ -202,19 +199,23 @@ function deleteLogs(){
 }
 
 ##
-# Docker helpers
+# Container helpers
 ##
-function dockerPurge(){
+function containersPurge(){
   docker ps -aq | ForEach-Object { docker rm -f $_ }
   docker ps
 }
 
-function dockerContainersNames(){
+function containersNames(){
   docker ps --format '{{.Names}}'
 }
 
-function dockerContainersStopped(){
+function containersStopped(){
   docker ps -a --filter "status=exited" --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}}"
+}
+
+function systemStats() {
+  docker ps
 }
 
 

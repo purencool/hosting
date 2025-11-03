@@ -45,7 +45,7 @@ class ContainerConfiguration
         // Request Json Object for configuration.
         $request = (new JsonRequestObject())->getResults([
             'response_format' => 'raw',
-            'request_type' => 'sites_config_all',
+            'request_type' => 'site_configuration_all',
             'request_data' => 'all'
         ]);
 

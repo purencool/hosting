@@ -7,13 +7,13 @@ use App\Services\JsonRequestObject;
 use App\Services\AppConfiguration;
 
 /**
- * Class SiteConfiguration
+ * Class SiteConfigurationFind
  *
- * The `cli:site:config` console command displays the configuration for a specific site.
+ * The `cli:site:config:find` console command displays the configuration.
  *
  * ## Usage
  * ```
- * php artisan cli:site:config {default.domain}
+ * php artisan cli:site:config:find {data}
  * ```
  *
  * ## Options
@@ -33,21 +33,21 @@ use App\Services\AppConfiguration;
  *
  * @package App\Console\Commands
  */
-class SiteConfiguration extends Command
+class SiteConfigurationFind extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'cli:site:config {default.domain?}';
+    protected $signature = 'cli:site:config:find {data}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new site configuration';
+    protected $description = 'Site configuration find data';
 
     /**
      * @return void
@@ -55,22 +55,12 @@ class SiteConfiguration extends Command
     public function handle(): void
     {
         $resultsFromTheQuestions = [];
-        
+
         $configArray = [
             'response_format' => 'raw',
-            'request_type' => 'site_configuration_all',
-            'request_data' => 'all'
+            'request_type' => 'site_configuration_find',
+            'request_data' => trim(implode(" ",explode("\\", $this->argument('data'))))
         ];
-
-        if(!$this->argument('default.domain') == '') {
-            $resultsFromTheQuestions['default.domain'] = $this->argument('default.domain');
-            $configArray = [
-                'response_format' => 'raw',
-                'request_type' => 'sites_config',
-                'request_data' => $resultsFromTheQuestions,
-            ];
-        }
-
 
         $this->info(
             json_encode(

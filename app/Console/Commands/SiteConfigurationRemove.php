@@ -6,13 +6,13 @@ use App\Services\JsonRequestObject;
 use App\Services\AppConfiguration;
 
 /**
- * Class SiteItemAdd
+ * Class SiteConfigurationRemvoe
  *
- * The `cli:site:item:add` console command adds a new item to the site configuration.
+ * The `cli:site:config:remove` console command removes an existing item from the site configuration.
  *
  * ## Usage
  * ```
- * php artisan cli:site:item:add {default.domain} {environment} {json_string}
+ * php artisan cli:site:config:remove {default.domain} {environment} {json_string}
  * ```
  *
  * ## Options
@@ -32,21 +32,21 @@ use App\Services\AppConfiguration;
  *
  * @package App\Console\Commands
  */
-class SiteItemAdd extends Command
+class SiteConfigurationRemove extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'cli:site:item:add {default.domain} {environment} {json_string}';
+    protected $signature = 'cli:site:config:remove {default.domain} {environment} {json_string}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Add an existing site configuration';
+    protected $description = 'Remove items in existing site configuration';
 
     /**
      * @return void
@@ -55,13 +55,13 @@ class SiteItemAdd extends Command
     {
         $resultsFromTheQuestions = [];
         $resultsFromTheQuestions['default.domain'] = $this->argument('default.domain');
-        $resultsFromTheQuestions['user'] = json_decode( $this->argument('json_string'), true);
+        $resultsFromTheQuestions['user']= json_decode( $this->argument('json_string'), true);
         $resultsFromTheQuestions['environment'] = $this->argument('environment');
         $this->info(
             json_encode(
                 (new JsonRequestObject())->getResults(
                     [
-                        'request_type' => 'sites_item_add',
+                        'request_type' => 'site_configuration_remove',
                         'response_format' => 'raw',
                         'request_data' => [
                             'default.domain' => $resultsFromTheQuestions['default.domain'],
@@ -73,5 +73,6 @@ class SiteItemAdd extends Command
                 JSON_PRETTY_PRINT
             )
         );
+
     }
 }

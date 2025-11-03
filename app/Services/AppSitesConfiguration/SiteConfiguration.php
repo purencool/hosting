@@ -3,6 +3,7 @@
 namespace App\Services\AppSitesConfiguration;
 
 use App\Services\EnvironmentVariables;
+use App\Utilities\Search;
 
 /**
  * Represents a site configuration.
@@ -168,6 +169,7 @@ class SiteConfiguration
 
     }
 
+
     /**
      * Get sites configuration for each environment.
      *
@@ -203,9 +205,19 @@ class SiteConfiguration
      *
      * @return array
      */
-    public function getAllSitesConfiguration(): array
+    public function getSiteConfigurationAll(): array
     {
         return $this->getConfiguration();
+    }
+
+    /**
+     * Searching configuration using App\Utilities\Search.
+     *
+     * @return array
+     */
+    public function getSiteConfigurationFind($data): array
+    {
+        return (new Search())->get($data, $this->getConfiguration());
     }
 
 

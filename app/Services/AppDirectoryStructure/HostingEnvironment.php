@@ -317,7 +317,7 @@ class HostingEnvironment
     }
 
     /**
-     * Update and backup container Files.
+     * Update container Files.
      *
      * @param string $directory
      * @param string $fileName
@@ -334,5 +334,21 @@ class HostingEnvironment
 
         file_put_contents($dirPath.'/'.$directory.'/'.$fileName, $data);
         return ['Configuration update to '.$fileName];
+    }
+
+
+    /**
+     * Update and hosting configuration.
+     *
+     * @param string $directory
+     * @param string $fileName
+     * @param string $data
+     * @return array
+     */
+    public function createHostingCertificate($directory,$fileName,$data) : array
+    {
+
+        file_put_contents($directory.'/'.$fileName, $data);
+        return ['Certificate is update to '.$fileName];
     }
 }

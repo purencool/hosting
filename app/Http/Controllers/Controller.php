@@ -24,6 +24,23 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     /**
+     * Array keys for json request.
+     */
+    private $switchArr = [
+       'build_containers',
+       'site_configuration',
+       'site_configuration_all',
+       'site_configuration_find',
+       'site_configuration_list',
+       'site_configuration_remove',
+       'site_configuration_replace',
+       'site_configuration_update',
+       'site_creation',
+       'site_list_domains'
+
+    ];
+
+    /**
     * Handle incoming API requests.
     */
     public function RequestAPI(Request $request)
@@ -47,40 +64,64 @@ class Controller extends BaseController
            
         $config = new AppConfiguration();
         switch ($default['request_type']) {   
-            case 'build_containers':
+            case $this->switchArr[0]:
                 $return = $config->buildAllContainers();
                 break;
                
-            case 'sites_config':
+            case $this->switchArr[1]:
                 $return = $config->getConfiguration(
                     $default['request_data']['default.domain'],
                 );
                 break;
                 
-            case 'sites_config_all':
-                $return = $config->getAllSitesConfiguration();
+            case $this->switchArr[2]:
+                $return = $config->getSiteConfigurationAll();
+                break;
+  
+            case $this->switchArr[3]:
+                $return = $config->getSiteConfigurationFind($default['request_data']);   
                 break;
 
-            case 'sites_creation':
-                $return = $config->create($default['request_data']);
+            case $this->switchArr[4]:
+                $return = $config->getSitesConfigList(); 
+                break;
+
+            case $this->switchArr[5]:
+                $return = ['Remove Configuration'];
+
+                //$return = $config->siteConfigurationRemove(
+                //    $default['request_data']['default.domain'],
+                //    $default['request_data']['user'],
+                //    $default['request_data']['environment'],
+                //);
+                break;    
+                
+            case $this->switchArr[6]:
+               $return = ['Replace Configuration'];
+               // $return = $config->siteConfigurationReplace(
+               //     $default['request_data']['default.domain'],
+               //     $default['request_data']['user'],
+               //     $default['request_data']['environment'],
+               // );
+                break;
+
+            case $this->switchArr[7]:
+                $return = ['Update Configuration'];
+                //$return = $config->siteConfigurationUpdate(
+                //    $default['request_data']['default.domain'],
+                //    $default['request_data']['user'],
+                //    $default['request_data']['environment'],
+                //);
+                break;    
+                
+            case $this->switchArr[8]:
+                $requestreturn = $config->create($default['request_data']);
                 break;    
             
-            case 'sites_list_config':
-                $return = $config->getSitesConfigList();
-                break;
-
-            case 'sites_list_domains':
+            case $this->switchArr[9]:
                 $return = $config->getListDomains();
                 break;
-                
-            case 'sites_item_update':
-                $return = $config->update(
-                    $default['request_data']['default.domain'],
-                    $default['request_data']['user'],
-                    $default['request_data']['environment'],
-                );
-                break;
-
+            
             default:
                 return response()->json(['status' => 'error', 'message' => 'Not able complete action.'], 400);
         }

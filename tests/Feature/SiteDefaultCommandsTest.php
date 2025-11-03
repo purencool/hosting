@@ -8,17 +8,17 @@ use Tests\TestCase;
 /**
  *
  */
-class SitenproDefaultCommandsTest extends TestCase
+class SiteDefaultCommandsTest extends TestCase
 {
     /** @test */
     public function it_displays_the_welcome_message()
     {
-        $this->artisan('spro:help')
+        $this->artisan('app:help')
             ->expectsOutput('-------------------------------------')
-            ->expectsOutput('Sitenpro Help')
+            ->expectsOutput('App Help')
             ->expectsOutput('-------------------------------------')
             ->expectsOutput('Available commands:')
-            ->expectsOutput('Sitenpro:help  Show this help message')
+            ->expectsOutput('app:help  Show this help message')
             ->expectsOutput('-------------------------------------')
             ->assertExitCode(0);
 

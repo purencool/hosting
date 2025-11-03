@@ -7,13 +7,14 @@ use App\Services\JsonRequestObject;
 use App\Http\Controllers\Controller as AppRestApi;
 
 /**
- * Class SiteItemUpdate
+ * Class SiteConfigurationReplace
  *
- * The `cli:site:item:update` console command updates an existing item in the site configuration.
+ * The `cli:site:config:update` console command updates 
+ * an existing item in the site configuration.
  *
  * ## Usage
  * ```
- * php artisan cli:site:item:update {default.domain} {environment} {json_string}
+ * php artisan cli:site:config:remove {default.domain} {environment} {json_string}
  * ```
  *
  * ## Options
@@ -35,14 +36,14 @@ use App\Http\Controllers\Controller as AppRestApi;
  *
  * @package App\Console\Commands
  */
-class SiteItemUpdate extends Command
+class SiteConfigurationReplace extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'cli:site:item:update {default.domain} {environment} {json_string}';
+    protected $signature = 'cli:site:config:replace {default.domain} {environment} {json_string}';
 
     /**
      * The console command description.
@@ -63,7 +64,7 @@ class SiteItemUpdate extends Command
         
         $jsonData = [
             'response_format' => 'raw',
-            'request_type' => 'sites_item_update',
+            'request_type' => 'site_configuration_replace',
             'request_data' => [
                 'default.domain' => $resultsFromTheQuestions['default.domain'],
                 'environment' => $resultsFromTheQuestions['environment'],
