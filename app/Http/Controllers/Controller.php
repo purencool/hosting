@@ -106,12 +106,11 @@ class Controller extends BaseController
                 break;
 
             case $this->switchArr[7]:
-                $return = ['Update Configuration'];
-                //$return = $config->siteConfigurationUpdate(
-                //    $default['request_data']['default.domain'],
-                //    $default['request_data']['user'],
-                //    $default['request_data']['environment'],
-                //);
+                $return = $config->siteConfigurationUpdate(
+                    $default['request_data']['default.domain'],
+                    $default['request_data']['user'],
+                    $default['request_data']['environment'],
+                );
                 break;    
                 
             case $this->switchArr[8]:

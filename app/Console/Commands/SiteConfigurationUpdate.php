@@ -53,25 +53,33 @@ class SiteConfigurationUpdate extends Command
      */
     public function handle(): void
     {
-        $resultsFromTheQuestions = [];
-        $resultsFromTheQuestions['default.domain'] = $this->argument('default.domain');
-        $resultsFromTheQuestions['user'] = json_decode( $this->argument('json_string'), true);
-        $resultsFromTheQuestions['environment'] = $this->argument('environment');
-        $this->info(
-            json_encode(
+        $ifArgumentIsEmpty=false;
+        $update = [];
+
+        $update['default.domain'] = $this->argument('default.domain');
+        $update['environment'] = $this->argument('environment');
+        $data = json_decode( $this->argument('json_string'), true);
+        if($data == NULL) {
+            $data = [];
+        }
+        $update['user'] = $data;
+        
+        $result = json_encode(
                 (new JsonRequestObject())->getResults(
                     [
                         'request_type' => 'site_configuration_update',
                         'response_format' => 'raw',
                         'request_data' => [
-                            'default.domain' => $resultsFromTheQuestions['default.domain'],
-                            'environment' => $resultsFromTheQuestions['environment'],
-                            'user' => $resultsFromTheQuestions['user'],
+                            'default.domain' => $update['default.domain'],
+                            'environment' => $update['environment'],
+                            'user' => $update['user'],
                         ],
                     ]
                 ),
-                JSON_PRETTY_PRINT
-            )
+            JSON_PRETTY_PRINT
         );
+    
+
+        $this->info($result);
     }
 }

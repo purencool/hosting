@@ -1,15 +1,15 @@
 # Hosting
 
-Accelerate your online projects with hosting self managed, purpose-built platform that handles hosting, your team can focus on building great online experiences. Environment cloning, for the mid-tier market.
+Accelerate your online projects with hosting self managed, purpose-built platform that handles hosting for different languagues, and environment cloning. Your team can focus on building great online experiences, for the mid-tier market.
 
 ## Installation
-Currently it needs a debian based and the hosting and uses docker compose in each environment. There is a plan to use Kubernetes as the product matures.
+Currently the application needs a debian host operating system. The client domains uses docker compose to create a separate entity that serves responses through a NGINX proxy. There is a plan to use Kubernetes as an option when product matures.
 
 ### Install script.
 ```
 curl -O https://raw.githubusercontent.com/purencool/hosting/refs/heads/main/install.sh && bash ./install.sh debian && cd app && rm ../install.sh && ./cli
 ```
-### Cli 
+### Cli tool 
 ```
 echo 'export PATH="$HOME<path to app>:$PATH"' >> ~/.bashrc
 chmod +x $HOME/<path to app>/cli
@@ -17,15 +17,43 @@ source ~/.bashrc
 ```
 
 ## Searching config
-This requires jq to be installed.
 #### Finding specific data using keys structure.
+This requires jq to be installed.
 ```
 cli config | jq -c '.. | .<key foo>? | select(. != null)'
 ```
-#### Searching for key and provide the data path.
+#### Searching for element in the configuration and provides the path.
+```
+cli config:find <foo> 
+```
+Example 
+```
+cli config:find example.com
+
+// Result
+{
+    "results": "domain:mydomain.com, environment:production, path:9 -> system -> user -> domains -> 1 -> example.com",
+    "results_raw": [
+        9,
+        "system",
+        "user",
+        "domains",
+        1
+    ]
+},
 ```
 
+## Updating config
+The command below will only update the user configuration object 
+and has no access to the system object for the same site.
 ```
+cli config:update <default.domain> <environment> <json string>
+```
+Example
+```
+cli config:update mydomain.com production "{\"domains\":\"example.com.au\"}"
+```
+
 #### Find data structure 
 
 ## App development

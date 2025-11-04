@@ -41,19 +41,26 @@ class AppConfiguration
      * @param string $environment
      * @return array
      */
-    public function update(string $siteName, array $arrayUpdates, string $environment = 'all'): array
+    public function siteConfigurationUpdate(string $siteName, array $arrayUpdates, string $environment = 'all'): array
     {
-        if(empty($arrayUpdates)) {
-            return ["No updates were made to $siteName."];
+        if( empty($arrayUpdates)) {
+            return ["No updates were made to $siteName. The update array is broken."];
         }
+       
+        // Update configuration.
+        (new SiteConfiguration())->setDefaultConfiguration(
+           (new ArrayUpdate())->update(
+                (new SiteConfiguration())->getSitesConfiguration($siteName),
+                $arrayUpdates, 
+                $environment
+            ) 
+        );
 
-        $siteArray = (new SiteConfiguration())->getSitesConfiguration($siteName);
-        $upDatedArray = (new ArrayUpdate())->update($siteArray, $arrayUpdates, $environment);
-        (new SiteConfiguration())->setDefaultConfiguration($upDatedArray);
-
+        // Return response.
         if($environment != 'all') {
             return (new SiteConfiguration())->getSitesConfiguration($siteName)[$environment];
         }
+
         return (new SiteConfiguration())->getSitesConfiguration($siteName);
     }
 
