@@ -87,8 +87,7 @@ elif [[ "$1" == "config" ]]; then
   $app_dir/appcli cli:site:config $2
 
 elif [[ "$1" == "config:find" ]]; then
-  data_find="$2\\\\$3\\\\$4\\\\$5\\\\$6"
-  $app_dir/appcli cli:site:config:find $data_find
+  $app_dir/appcli cli:site:config:find $2 $3
 
 elif [ "$1" == "config:remove" ]; then
  
@@ -111,6 +110,9 @@ elif [[ "$1" == "domains:list:users" ]]; then
 
 elif [[ "$1" == "domains:list:search" ]]; then
   $app_dir/appcli cli:site:domains:list:search $2
+
+elif [[ "$1" == "json" ]]; then
+  $2
 
 else
   help

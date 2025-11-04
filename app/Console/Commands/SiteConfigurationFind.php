@@ -40,7 +40,7 @@ class SiteConfigurationFind extends Command
      *
      * @var string
      */
-    protected $signature = 'cli:site:config:find {data}';
+    protected $signature = 'cli:site:config:find {data} {flag?}';
 
     /**
      * The console command description.
@@ -59,14 +59,26 @@ class SiteConfigurationFind extends Command
         $configArray = [
             'response_format' => 'raw',
             'request_type' => 'site_configuration_find',
-            'request_data' => trim(implode(" ",explode("\\", $this->argument('data'))))
+            'request_data' => $this->argument('data')
         ];
+        
+        $flag = $this->argument('flag');
+        $search = (new JsonRequestObject())->getResults($configArray);
+        if($flag == 'raw') {
+            $result = $search;
+        } else {
+            foreach($search as $value) {
+                $result[] = [
+                    "results" => $value["results"],
+                    "results_raw" => $value["results_raw"],
+                ];
+            }
+        }
 
+
+       // exit;
         $this->info(
-            json_encode(
-                (new JsonRequestObject())->getResults($configArray),
-                JSON_PRETTY_PRINT
-            )
+           json_encode( $result, JSON_PRETTY_PRINT)
         );
     }
 }
