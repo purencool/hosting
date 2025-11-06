@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Services\AppSitesConfiguration\Items\ArrayRemove;
-use App\Services\AppSitesConfiguration\Items\ArrayUpdate;
+use App\Services\AppSitesConfiguration\ChangeState\ArrayRemove;
+use App\Services\AppSitesConfiguration\ChangeState\ArrayUpdate;
 use App\Services\AppSitesConfiguration\SiteConfiguration;
 use App\Services\AppDirectoryStructure\HostingEnvironment;
 use App\Services\AppContainerConfiguration\ContainerConfiguration;
@@ -46,11 +46,19 @@ class AppConfiguration
         if( empty($arrayUpdates)) {
             return ["No updates were made to $siteName. The update array is broken."];
         }
-       
+        $siteArray = (new SiteConfiguration())->getSitesConfiguration($siteName);
+
+        if(empty($siteArray)) {
+            return ["No updates were made to $siteName as $siteName doesn't exit."];
+        }
+
+        if(empty($siteArray[$environment])) {
+            return ["No updates were made to $siteName as $environment doesn't exit."];
+        }
         // Update configuration.
         (new SiteConfiguration())->setDefaultConfiguration(
            (new ArrayUpdate())->update(
-                (new SiteConfiguration())->getSitesConfiguration($siteName),
+                $siteArray,
                 $arrayUpdates, 
                 $environment
             ) 
@@ -66,19 +74,34 @@ class AppConfiguration
 
     /**
      * @param string $siteName
-     * @param array $arrayUpdates
+     * @param array $arrayItemToRemoved
      * @param string $environment
-     * @return string
+     * @return array
      */
-    public function remove(string $siteName, array $arrayUpdates, string $environment ): string
+    public function siteConfigurationRemove(string $siteName, array $arrayItemToRemoved, string $environment): array
     {
+        
+        if(empty($arrayItemToRemoved)) {
+            return ["No updates were made to $siteName. The update array is broken."];
+        }
+        
+        // Remove configuration
         $siteArray = (new SiteConfiguration())->getSitesConfiguration($siteName);
-        $cleaner = new ArrayRemove();
-        $cleaner->setArray($siteArray[$environment]['user']);
-        $cleaner->remove($arrayUpdates['path'], $arrayUpdates['item']);
-        $siteArray[$environment]['user'] = $cleaner->getArray();
-         (new SiteConfiguration())->setDefaultConfiguration($siteArray);
-         return $siteArray[$environment];
+       
+        if(empty($siteArray)) {
+            return ["No updates were made to $siteName as $siteName doesn't exit."];
+        }
+
+        if(empty($siteArray[$environment])) {
+            return ["No updates were made to $siteName as $environment doesn't exit."];
+        }
+
+        $removeItem = new ArrayRemove($siteArray[$environment]['user'], $arrayItemToRemoved);
+        $siteArray[$environment]['user'] = $removeItem->getResult();
+        (new SiteConfiguration())->setDefaultConfiguration($siteArray);
+
+        return (new SiteConfiguration())->getSitesConfiguration($siteName);
+
     }
 
     /**

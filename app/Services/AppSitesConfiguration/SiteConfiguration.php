@@ -142,7 +142,6 @@ class SiteConfiguration
                 $siteConfig = $this->getSitesConfiguration($siteName);
                 if(isset($siteConfig[$environment]['user']['domains'])) {
                     foreach($siteConfig[$environment]['user']['domains'] as $domain) {
-                      
                        if($type == 'domain') {
                             $return[] = [
                                 'site' => $siteName,
@@ -178,26 +177,37 @@ class SiteConfiguration
      * @return array
      * 
      */
-    public function getSitesConfiguration(string $siteName): array
-    {
-        if( $siteName === "" )
-        {
-            return array();
-        }
-        
-        $return = array();
-        $environmentArr = (new EnvironmentVariables())->getHostingSiteEnvironmentsArray();
-        foreach( $environmentArr as $environment)
-        {
-            $path = (new EnvironmentVariables())->getHostingSiteBaseDirectoryPath()
-                ."/" . $environment
-                . "/" . $siteName
-                . "/config.json";
-            $return[$environment] = json_decode(file_get_contents($path), true);
-        }
-
-        return $return;
+  public function getSitesConfiguration(string $siteName): array
+{
+    if ($siteName === "") {
+        return [];
     }
+    
+    $results = [];
+    $environmentArr = (new EnvironmentVariables())->getHostingSiteEnvironmentsArray();
+        
+    foreach ($environmentArr as $environment) 
+    {
+        $pathInfo =  [(new EnvironmentVariables())
+        ->getHostingSiteBaseDirectoryPath(), "/", $environment, "/", $siteName, "/config.json"];
+                    
+        try 
+        {
+            $file_content = @file_get_contents(implode("", $pathInfo));
+            
+            if ($file_content === false) 
+            {  
+                $result = [];   
+            } else {          
+                $results[$environment] = json_decode($file_content, true);
+            }        
+        } catch (Exception $e) {             
+            $results[$environment]  = ["error" => true, "message" => $e->getMessage()];   // Log Error                  
+        } 
+    }
+    
+    return $results;
+}
 
 
     /**

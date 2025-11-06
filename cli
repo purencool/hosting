@@ -90,14 +90,13 @@ elif [[ "$1" == "config:find" ]]; then
   $app_dir/appcli cli:site:config:find $2 $3
 
 elif [ "$1" == "config:remove" ]; then
- 
-  $app_dir/appcli cli:site:config:remove $2
+  $app_dir/appcli cli:site:config:remove $2 $3 "$4"
 
 elif [ "$1" == "config:replace" ]; then
-  $app_dir/appcli cli:site:config:replace $2 $3 $4  
+  $app_dir/appcli cli:site:config:replace $2 $3 "$4"  
 
 elif [ "$1" == "config:update" ]; then
-  $app_dir/appcli cli:site:config:update  $2 $3 $4
+  $app_dir/appcli cli:site:config:update  $2 $3 "$4"
 
 elif [ "$1" == "create" ]; then
   $app_dir/appcli cli:site:creation $2

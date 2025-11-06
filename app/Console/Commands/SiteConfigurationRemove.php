@@ -53,26 +53,36 @@ class SiteConfigurationRemove extends Command
      */
     public function handle(): void
     {
-        $resultsFromTheQuestions = [];
-        $resultsFromTheQuestions['default.domain'] = $this->argument('default.domain');
-        $resultsFromTheQuestions['user']= json_decode( $this->argument('json_string'), true);
-        $resultsFromTheQuestions['environment'] = $this->argument('environment');
-        $this->info(
-            json_encode(
-                (new JsonRequestObject())->getResults(
-                    [
-                        'request_type' => 'site_configuration_remove',
-                        'response_format' => 'raw',
-                        'request_data' => [
-                            'default.domain' => $resultsFromTheQuestions['default.domain'],
-                            'environment' => $resultsFromTheQuestions['environment'],
-                            'user' => $resultsFromTheQuestions['user'],
-                        ],
-                    ]
-                ),
-                JSON_PRETTY_PRINT
-            )
-        );
+        
+        $remove = [];
+        $remove['default.domain'] = $this->argument('default.domain');
+        $remove['environment'] = $this->argument('environment');
+
+        $data = json_decode( $this->argument('json_string'), true);
+        if($data == NULL) {
+            $data = [];
+        }
+        $remove['user'] = $data;
+
+
+        $result = (new JsonRequestObject())->getResults(
+            [
+                'request_type' => 'site_configuration_remove',
+                'response_format' => 'raw',
+                'request_data' => [
+                    'default.domain' => $remove['default.domain'],
+                    'environment' => $remove['environment'],
+                    'user' => $remove['user'],
+                ],
+            ]
+         );
+
+
+        if(empty($result)) {
+            $result = '';
+        }
+        
+        $this->info(json_encode($result,JSON_PRETTY_PRINT));
 
     }
 }

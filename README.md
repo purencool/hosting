@@ -49,12 +49,28 @@ and has no access to the system object for the same site.
 ```
 cli config:update <default.domain> <environment> <json string>
 ```
+Examples
+```
+cli config:update mydomain.com production '{"domains":"example.com"}'
+cli config:update mydomain.com production '{"code_management":{"actions":"composer up"}}'
+```
+
+## Removing config
+The command below will only update the user configuration object 
+and has no access to the system object for the same site.
+```
+cli config:remove <default.domain> <environment> <json string>
+```
 Example
 ```
-cli config:update mydomain.com production "{\"domains\":\"example.com.au\"}"
+cli config:remove mydomain.com production '{"domains":"example.com"}'
 ```
 
 #### Find data structure 
+Find anything in user configuration across the platform.
+```
+cli config:find  example.com.a1
+```
 
 ## App development
 #### End point test example

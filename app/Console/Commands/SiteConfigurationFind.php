@@ -54,16 +54,16 @@ class SiteConfigurationFind extends Command
      */
     public function handle(): void
     {
-        $resultsFromTheQuestions = [];
 
         $configArray = [
             'response_format' => 'raw',
             'request_type' => 'site_configuration_find',
             'request_data' => $this->argument('data')
         ];
+        $search = (new JsonRequestObject())->getResults($configArray);
+        
         
         $flag = $this->argument('flag');
-        $search = (new JsonRequestObject())->getResults($configArray);
         if($flag == 'raw') {
             $result = $search;
         } else {
@@ -75,10 +75,11 @@ class SiteConfigurationFind extends Command
             }
         }
 
+        if(empty($result)) {
+            $result = '';
+        }
+        
+        $this->info(json_encode($result,JSON_PRETTY_PRINT));
 
-       // exit;
-        $this->info(
-           json_encode( $result, JSON_PRETTY_PRINT)
-        );
     }
 }

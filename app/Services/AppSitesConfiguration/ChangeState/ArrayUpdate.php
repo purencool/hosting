@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\AppSitesConfiguration\Items;
+namespace App\Services\AppSitesConfiguration\ChangeState;
 
 
 use App\Services\AppSitesConfiguration\SiteConfiguration;
@@ -31,15 +31,4 @@ class ArrayUpdate
         }
         return $siteArray;
     }
-
-
-  //  function updateConfig(&$config, $keys, $newValue) {
-  //  if (is_array($keys)) {  // multiple levels deep
-  //    foreach($keys as $key) {  
-  //         updateConfig($config[$key], $keys, $newValue);  
-  //    }       
-  //  } else {  // single level key
-  //       $config = $newValue;    
-  //  }  
-  //}
 }
